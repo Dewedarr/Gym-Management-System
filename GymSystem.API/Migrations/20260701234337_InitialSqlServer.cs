@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -9,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GymSystem.API.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialPostgres : Migration
+    public partial class InitialSqlServer : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,25 +17,25 @@ namespace GymSystem.API.Migrations
                 name: "GymSettings",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    GymName = table.Column<string>(type: "text", nullable: false),
-                    Phone = table.Column<string>(type: "text", nullable: false),
-                    WhatsApp = table.Column<string>(type: "text", nullable: false),
-                    Address = table.Column<string>(type: "text", nullable: false),
-                    GoogleMapsUrl = table.Column<string>(type: "text", nullable: false),
-                    WorkingHours = table.Column<string>(type: "text", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    InstaPay = table.Column<string>(type: "text", nullable: false),
-                    VodafoneCash = table.Column<string>(type: "text", nullable: false),
-                    LogoBase64 = table.Column<string>(type: "text", nullable: true),
-                    HeroImageBase64 = table.Column<string>(type: "text", nullable: true),
-                    HeroTitle = table.Column<string>(type: "text", nullable: true),
-                    HeroSubtitle = table.Column<string>(type: "text", nullable: true),
-                    GalleryImagesJson = table.Column<string>(type: "text", nullable: true),
-                    BranchesJson = table.Column<string>(type: "text", nullable: true),
-                    YearsExperience = table.Column<int>(type: "integer", nullable: false),
-                    AboutText = table.Column<string>(type: "text", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    GymName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    WhatsApp = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GoogleMapsUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    WorkingHours = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    InstaPay = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    VodafoneCash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LogoBase64 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HeroImageBase64 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HeroTitle = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HeroSubtitle = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    GalleryImagesJson = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BranchesJson = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    YearsExperience = table.Column<int>(type: "int", nullable: false),
+                    AboutText = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -47,18 +46,18 @@ namespace GymSystem.API.Migrations
                 name: "SubscriptionPlans",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Type = table.Column<int>(type: "integer", nullable: false),
-                    Price = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
-                    DurationMonths = table.Column<int>(type: "integer", nullable: false),
-                    SessionsPerMonth = table.Column<int>(type: "integer", nullable: true),
-                    InBodySessionsPerMonth = table.Column<int>(type: "integer", nullable: true),
-                    IncludesNutritionPlan = table.Column<bool>(type: "boolean", nullable: false),
-                    IncludesPrivateCoach = table.Column<bool>(type: "boolean", nullable: false),
-                    Features = table.Column<string>(type: "text", nullable: true),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    DurationMonths = table.Column<int>(type: "int", nullable: false),
+                    SessionsPerMonth = table.Column<int>(type: "int", nullable: true),
+                    InBodySessionsPerMonth = table.Column<int>(type: "int", nullable: true),
+                    IncludesNutritionPlan = table.Column<bool>(type: "bit", nullable: false),
+                    IncludesPrivateCoach = table.Column<bool>(type: "bit", nullable: false),
+                    Features = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -69,18 +68,18 @@ namespace GymSystem.API.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    FullName = table.Column<string>(type: "text", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    PasswordHash = table.Column<string>(type: "text", nullable: false),
-                    Role = table.Column<int>(type: "integer", nullable: false),
-                    Phone = table.Column<string>(type: "text", nullable: true),
-                    ProfileImage = table.Column<string>(type: "text", nullable: true),
-                    Address = table.Column<string>(type: "text", nullable: true),
-                    Bio = table.Column<string>(type: "text", nullable: true),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Role = table.Column<int>(type: "int", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProfileImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Bio = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -91,13 +90,13 @@ namespace GymSystem.API.Migrations
                 name: "Coaches",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    Specialization = table.Column<string>(type: "text", nullable: true),
-                    Bio = table.Column<string>(type: "text", nullable: true),
-                    MaxPrivateTraineesPerMonth = table.Column<int>(type: "integer", nullable: false),
-                    PrivateSessionPrice = table.Column<decimal>(type: "numeric(18,2)", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Specialization = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Bio = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MaxPrivateTraineesPerMonth = table.Column<int>(type: "int", nullable: false),
+                    PrivateSessionPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -114,18 +113,18 @@ namespace GymSystem.API.Migrations
                 name: "Exercises",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CoachId = table.Column<int>(type: "integer", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    MuscleGroup = table.Column<string>(type: "text", nullable: true),
-                    MediaUrl = table.Column<string>(type: "text", nullable: true),
-                    MediaType = table.Column<string>(type: "text", nullable: false),
-                    Sets = table.Column<string>(type: "text", nullable: true),
-                    Reps = table.Column<string>(type: "text", nullable: true),
-                    Duration = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CoachId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MuscleGroup = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MediaUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MediaType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Sets = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Reps = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Duration = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -142,20 +141,20 @@ namespace GymSystem.API.Migrations
                 name: "Trainees",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    CoachId = table.Column<int>(type: "integer", nullable: true),
-                    TrainingStartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    TrainingEndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    TrainingDurationMonths = table.Column<int>(type: "integer", nullable: true),
-                    Height = table.Column<double>(type: "double precision", nullable: true),
-                    Weight = table.Column<double>(type: "double precision", nullable: true),
-                    Age = table.Column<int>(type: "integer", nullable: true),
-                    Gender = table.Column<string>(type: "text", nullable: true),
-                    FitnessGoal = table.Column<string>(type: "text", nullable: true),
-                    TrialSessionsUsed = table.Column<int>(type: "integer", nullable: false),
-                    TrainingStatus = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    CoachId = table.Column<int>(type: "int", nullable: true),
+                    TrainingStartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    TrainingEndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    TrainingDurationMonths = table.Column<int>(type: "int", nullable: true),
+                    Height = table.Column<double>(type: "float", nullable: true),
+                    Weight = table.Column<double>(type: "float", nullable: true),
+                    Age = table.Column<int>(type: "int", nullable: true),
+                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FitnessGoal = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TrialSessionsUsed = table.Column<int>(type: "int", nullable: false),
+                    TrainingStatus = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -178,12 +177,12 @@ namespace GymSystem.API.Migrations
                 name: "ChatMessages",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TraineeId = table.Column<int>(type: "integer", nullable: false),
-                    Message = table.Column<string>(type: "text", nullable: false),
-                    Response = table.Column<string>(type: "text", nullable: false),
-                    SentAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TraineeId = table.Column<int>(type: "int", nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Response = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SentAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -200,18 +199,18 @@ namespace GymSystem.API.Migrations
                 name: "CoachingSessions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TraineeId = table.Column<int>(type: "integer", nullable: false),
-                    CoachId = table.Column<int>(type: "integer", nullable: false),
-                    SessionDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Notes = table.Column<string>(type: "text", nullable: true),
-                    Rating = table.Column<int>(type: "integer", nullable: false),
-                    MarkedByCoach = table.Column<bool>(type: "boolean", nullable: false),
-                    MarkedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    Status = table.Column<int>(type: "integer", nullable: false),
-                    ConfirmedByAdminId = table.Column<int>(type: "integer", nullable: true),
-                    ConfirmedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TraineeId = table.Column<int>(type: "int", nullable: false),
+                    CoachId = table.Column<int>(type: "int", nullable: false),
+                    SessionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Rating = table.Column<int>(type: "int", nullable: false),
+                    MarkedByCoach = table.Column<bool>(type: "bit", nullable: false),
+                    MarkedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    ConfirmedByAdminId = table.Column<int>(type: "int", nullable: true),
+                    ConfirmedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -234,21 +233,21 @@ namespace GymSystem.API.Migrations
                 name: "InBodyRecords",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TraineeId = table.Column<int>(type: "integer", nullable: false),
-                    RecordDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Weight = table.Column<double>(type: "double precision", nullable: false),
-                    Height = table.Column<double>(type: "double precision", nullable: false),
-                    BodyFatPercentage = table.Column<double>(type: "double precision", nullable: true),
-                    MuscleMass = table.Column<double>(type: "double precision", nullable: true),
-                    BMI = table.Column<double>(type: "double precision", nullable: true),
-                    VisceralFat = table.Column<double>(type: "double precision", nullable: true),
-                    WaterPercentage = table.Column<double>(type: "double precision", nullable: true),
-                    BoneMass = table.Column<double>(type: "double precision", nullable: true),
-                    Notes = table.Column<string>(type: "text", nullable: true),
-                    AttachmentBase64 = table.Column<string>(type: "text", nullable: true),
-                    AttachmentType = table.Column<string>(type: "text", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TraineeId = table.Column<int>(type: "int", nullable: false),
+                    RecordDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Weight = table.Column<double>(type: "float", nullable: false),
+                    Height = table.Column<double>(type: "float", nullable: false),
+                    BodyFatPercentage = table.Column<double>(type: "float", nullable: true),
+                    MuscleMass = table.Column<double>(type: "float", nullable: true),
+                    BMI = table.Column<double>(type: "float", nullable: true),
+                    VisceralFat = table.Column<double>(type: "float", nullable: true),
+                    WaterPercentage = table.Column<double>(type: "float", nullable: true),
+                    BoneMass = table.Column<double>(type: "float", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AttachmentBase64 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AttachmentType = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -265,16 +264,16 @@ namespace GymSystem.API.Migrations
                 name: "NutritionPlans",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TraineeId = table.Column<int>(type: "integer", nullable: false),
-                    CoachId = table.Column<int>(type: "integer", nullable: true),
-                    Title = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    IsAutoGenerated = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    AttachmentBase64 = table.Column<string>(type: "text", nullable: true),
-                    AttachmentType = table.Column<string>(type: "text", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TraineeId = table.Column<int>(type: "int", nullable: false),
+                    CoachId = table.Column<int>(type: "int", nullable: true),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsAutoGenerated = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AttachmentBase64 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AttachmentType = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -297,13 +296,13 @@ namespace GymSystem.API.Migrations
                 name: "TraineeExercises",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TraineeId = table.Column<int>(type: "integer", nullable: false),
-                    ExerciseId = table.Column<int>(type: "integer", nullable: false),
-                    Day = table.Column<string>(type: "text", nullable: true),
-                    IsCompleted = table.Column<bool>(type: "boolean", nullable: false),
-                    AssignedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TraineeId = table.Column<int>(type: "int", nullable: false),
+                    ExerciseId = table.Column<int>(type: "int", nullable: false),
+                    Day = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsCompleted = table.Column<bool>(type: "bit", nullable: false),
+                    AssignedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -326,21 +325,21 @@ namespace GymSystem.API.Migrations
                 name: "TraineeSubscriptions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TraineeId = table.Column<int>(type: "integer", nullable: false),
-                    SubscriptionPlanId = table.Column<int>(type: "integer", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    RemainingSessionsThisMonth = table.Column<int>(type: "integer", nullable: false),
-                    RemainingInBodySessions = table.Column<int>(type: "integer", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    PaidAmount = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
-                    PaymentStatus = table.Column<int>(type: "integer", nullable: false),
-                    PaymentMethod = table.Column<int>(type: "integer", nullable: true),
-                    PaymentReference = table.Column<string>(type: "text", nullable: true),
-                    PaymentConfirmedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    ConfirmedByAdminId = table.Column<int>(type: "integer", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TraineeId = table.Column<int>(type: "int", nullable: false),
+                    SubscriptionPlanId = table.Column<int>(type: "int", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RemainingSessionsThisMonth = table.Column<int>(type: "int", nullable: false),
+                    RemainingInBodySessions = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    PaidAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PaymentStatus = table.Column<int>(type: "int", nullable: false),
+                    PaymentMethod = table.Column<int>(type: "int", nullable: true),
+                    PaymentReference = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PaymentConfirmedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ConfirmedByAdminId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -363,16 +362,16 @@ namespace GymSystem.API.Migrations
                 name: "NutritionMeals",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    NutritionPlanId = table.Column<int>(type: "integer", nullable: false),
-                    MealName = table.Column<string>(type: "text", nullable: false),
-                    Time = table.Column<string>(type: "text", nullable: true),
-                    Foods = table.Column<string>(type: "text", nullable: true),
-                    Calories = table.Column<int>(type: "integer", nullable: true),
-                    Protein = table.Column<double>(type: "double precision", nullable: true),
-                    Carbs = table.Column<double>(type: "double precision", nullable: true),
-                    Fats = table.Column<double>(type: "double precision", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NutritionPlanId = table.Column<int>(type: "int", nullable: false),
+                    MealName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Time = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Foods = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Calories = table.Column<int>(type: "int", nullable: true),
+                    Protein = table.Column<double>(type: "float", nullable: true),
+                    Carbs = table.Column<double>(type: "float", nullable: true),
+                    Fats = table.Column<double>(type: "float", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -403,7 +402,7 @@ namespace GymSystem.API.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Address", "Bio", "CreatedAt", "Email", "FullName", "IsActive", "PasswordHash", "Phone", "ProfileImage", "Role" },
-                values: new object[] { 1, null, null, new DateTime(2026, 7, 1, 21, 32, 38, 74, DateTimeKind.Utc).AddTicks(2161), "admin@gym.com", "Admin", true, "$2a$11$OPNDWvpAVGRnPNuR5OUYTO0gCRQHl6sjebKQs71mvGZLpCskXyUpG", null, null, 0 });
+                values: new object[] { 1, null, null, new DateTime(2026, 7, 1, 23, 43, 36, 988, DateTimeKind.Utc).AddTicks(9617), "admin@gym.com", "Admin", true, "$2a$11$6Uw7AQBs4mmYMAqOr7.8NuKwg/fJqtw939CRvQ64KgzjuB2fWS1ZW", null, null, 0 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ChatMessages_TraineeId",
