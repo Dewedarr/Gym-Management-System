@@ -1,0 +1,110 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Light mode (default) */
+:root {
+  --gym-bg: 241 245 249;
+  --gym-card: 255 255 255;
+  --gym-border: 226 232 240;
+  --gym-text: 15 23 42;
+  --gym-muted: 100 116 139;
+}
+
+/* Dark mode */
+html.dark {
+  --gym-bg: 10 10 10;
+  --gym-card: 20 20 20;
+  --gym-border: 42 42 42;
+  --gym-text: 229 229 229;
+  --gym-muted: 115 115 115;
+}
+
+@layer base {
+  * { font-family: 'Cairo', sans-serif; }
+  body {
+    background-color: rgb(var(--gym-bg));
+    color: rgb(var(--gym-text));
+    direction: rtl;
+  }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background-color: rgb(var(--gym-card)); }
+  ::-webkit-scrollbar-thumb { @apply bg-gym-primary rounded-full; }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gym-primary hover:bg-gym-primary-dark text-white font-bold py-2 px-4 rounded-lg transition-all duration-200 flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    background-color: rgb(var(--gym-card));
+    border: 1px solid rgb(var(--gym-border));
+    color: rgb(var(--gym-text));
+    @apply font-semibold py-2 px-4 rounded-lg transition-all duration-200 flex items-center gap-2 justify-center;
+  }
+  .btn-secondary:hover { border-color: #f97316; }
+  .btn-danger {
+    @apply bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-200 flex items-center gap-2 justify-center;
+  }
+  .card {
+    background-color: rgb(var(--gym-card));
+    border: 1px solid rgb(var(--gym-border));
+    @apply rounded-xl p-6;
+  }
+  .input {
+    background-color: rgb(var(--gym-bg));
+    border: 1px solid rgb(var(--gym-border));
+    color: rgb(var(--gym-text));
+    @apply w-full rounded-lg px-4 py-2.5 focus:outline-none transition-colors;
+  }
+  .input::placeholder { color: rgb(var(--gym-muted)); }
+  .input:focus { border-color: #f97316; }
+  .label {
+    color: rgb(var(--gym-muted));
+    @apply block text-sm font-semibold mb-1.5;
+  }
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold;
+  }
+  .sidebar-link {
+    color: rgb(var(--gym-muted));
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 cursor-pointer;
+  }
+  .sidebar-link:hover {
+    color: rgb(var(--gym-text));
+    background-color: rgb(var(--gym-text) / 0.05);
+  }
+  .sidebar-link.active {
+    @apply bg-gym-primary/10 text-gym-primary border border-gym-primary/20;
+  }
+  .stat-card { @apply card flex items-center gap-4; }
+  .stat-icon { @apply w-12 h-12 rounded-xl flex items-center justify-center text-2xl; }
+  .table-row {
+    border-bottom: 1px solid rgb(var(--gym-border));
+    @apply transition-colors;
+  }
+  .table-row:hover { background-color: rgb(var(--gym-text) / 0.03); }
+  .table-scroll { @apply overflow-x-auto -mx-4 md:mx-0; }
+  .table-scroll table { @apply min-w-[600px] md:min-w-full; }
+  .glow { box-shadow: 0 0 20px rgba(249, 115, 22, 0.15); }
+}
+
+/* Override Tailwind bg/text classes with CSS variables */
+.bg-gym-bg  { background-color: rgb(var(--gym-bg))   !important; }
+.bg-gym-card { background-color: rgb(var(--gym-card)) !important; }
+.border-gym-border { border-color: rgb(var(--gym-border)) !important; }
+.text-gym-text { color: rgb(var(--gym-text)) !important; }
+.text-gym-muted { color: rgb(var(--gym-muted)) !important; }
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeIn 0.3s ease-out; }
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 10px rgba(249,115,22,0.2); }
+  50%       { box-shadow: 0 0 25px rgba(249,115,22,0.5); }
+}
+.pulse-glow { animation: pulse-glow 2s infinite; }

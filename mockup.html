@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GymPro - Mockup</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f0f0f; color: #e5e5e5; }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    height: 300px;
+    background: linear-gradient(135deg, #1a0a00 0%, #2d1200 40%, #1a1a1a 100%);
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    padding: 28px;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('https://images.unsplash.com/photo-1593079831268-3381b0db4a77?w=1200&q=80') center/cover;
+    opacity: 0.35;
+  }
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
+  }
+  .hero-content { position: relative; z-index: 2; width: 100%; }
+  .gym-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,120,0,0.2); border: 1px solid rgba(255,120,0,0.4);
+    color: #ff7800; padding: 4px 12px; border-radius: 20px;
+    font-size: 11px; font-weight: 700; margin-bottom: 10px; letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .hero h1 { font-size: 32px; font-weight: 900; color: #fff; line-height: 1.1; }
+  .hero h1 span { color: #ff7800; }
+  .hero p { color: rgba(255,255,255,0.65); font-size: 14px; margin-top: 6px; }
+
+  /* Main content */
+  .main { padding: 20px; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+
+  /* Member card */
+  .member-card {
+    background: linear-gradient(135deg, #1c1c1c, #252525);
+    border: 1px solid #333;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .progress-ring-wrap { position: relative; flex-shrink: 0; width: 90px; height: 90px; }
+  .progress-ring-wrap svg { transform: rotate(-90deg); }
+  .ring-bg { fill: none; stroke: #2a2a2a; stroke-width: 8; }
+  .ring-fill { fill: none; stroke: #ff7800; stroke-width: 8; stroke-linecap: round;
+    stroke-dasharray: 220; stroke-dashoffset: 66; transition: all 0.5s; }
+  .ring-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .ring-text .num { font-size: 22px; font-weight: 900; color: #ff7800; line-height: 1; }
+  .ring-text .lbl { font-size: 9px; color: #777; margin-top: 2px; }
+  .member-info { flex: 1; }
+  .member-info h2 { font-size: 20px; font-weight: 900; color: #fff; }
+  .member-info .sub-name { display: inline-flex; align-items: center; gap: 5px;
+    background: rgba(255,120,0,0.15); color: #ff7800; padding: 3px 10px;
+    border-radius: 20px; font-size: 11px; font-weight: 700; margin: 6px 0; }
+  .member-info .coach { color: #888; font-size: 13px; }
+  .member-info .coach span { color: #ccc; font-weight: 600; }
+  .member-info .expires { color: #666; font-size: 12px; margin-top: 4px; }
+  .member-info .expires b { color: #aaa; }
+
+  /* Stats strip */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .stat-card {
+    background: #1a1a1a; border: 1px solid #2a2a2a;
+    border-radius: 14px; padding: 14px 12px; text-align: center;
+  }
+  .stat-card .icon { font-size: 22px; margin-bottom: 6px; }
+  .stat-card .val { font-size: 20px; font-weight: 900; }
+  .stat-card .unit { font-size: 10px; color: #666; }
+  .stat-card .label { font-size: 11px; color: #666; margin-top: 3px; }
+
+  /* Quick actions */
+  .section-title { font-size: 13px; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+  .actions-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .action-btn {
+    border-radius: 16px; padding: 18px 10px; text-align: center;
+    border: 1px solid transparent; cursor: pointer;
+    transition: transform 0.15s;
+    text-decoration: none;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .action-btn:hover { transform: translateY(-3px); }
+  .action-btn .a-icon { font-size: 32px; }
+  .action-btn .a-label { font-size: 13px; font-weight: 800; }
+  .a-orange { background: rgba(255,120,0,0.12); border-color: rgba(255,120,0,0.3); color: #ff7800; }
+  .a-blue   { background: rgba(59,130,246,0.12); border-color: rgba(59,130,246,0.3); color: #60a5fa; }
+  .a-green  { background: rgba(34,197,94,0.12);  border-color: rgba(34,197,94,0.3);  color: #4ade80; }
+  .a-gold   { background: rgba(234,179,8,0.12);  border-color: rgba(234,179,8,0.3);  color: #facc15; }
+
+  /* Gallery */
+  .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .gallery-item {
+    border-radius: 14px; overflow: hidden; position: relative; aspect-ratio: 4/3;
+    background: #1a1a1a;
+  }
+  .gallery-item img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
+  .gallery-item .caption {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    color: #fff; font-size: 12px; font-weight: 700; padding: 20px 10px 10px;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #111; }
+  ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="gym-badge">⚡ DewedarGYM</div>
+    <h1>أهلاً <span>أحمد سامي!</span> 💪</h1>
+    <p>استعد لتحدي اليوم — كل يوم خطوة نحو الأفضل</p>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- Member Card -->
+  <div class="member-card">
+    <div class="progress-ring-wrap">
+      <svg width="90" height="90" viewBox="0 0 90 90">
+        <circle class="ring-bg" cx="45" cy="45" r="35"/>
+        <circle class="ring-fill" cx="45" cy="45" r="35"/>
+      </svg>
+      <div class="ring-text">
+        <span class="num">10</span>
+        <span class="lbl">سيشن</span>
+      </div>
+    </div>
+    <div class="member-info">
+      <h2>أحمد سامي</h2>
+      <div class="sub-name">✅ تدريب برايفت</div>
+      <div class="coach">الكوتش: <span>أحمد دويدار</span></div>
+      <div class="expires">ينتهي في <b>29/7/2026</b></div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div>
+    <div class="section-title">📊 إحصائياتك</div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="icon">⚖️</div>
+        <div class="val" style="color:#ff7800">23.5</div>
+        <div class="unit">BMI</div>
+        <div class="label">وزن طبيعي</div>
+      </div>
+      <div class="stat-card">
+        <div class="icon">🏋️</div>
+        <div class="val" style="color:#60a5fa">76</div>
+        <div class="unit">كجم</div>
+        <div class="label">الوزن الحالي</div>
+      </div>
+      <div class="stat-card">
+        <div class="icon">🔥</div>
+        <div class="val" style="color:#f97316">3151</div>
+        <div class="unit">كيلو سعر</div>
+        <div class="label">سعرات يومية</div>
+      </div>
+      <div class="stat-card">
+        <div class="icon">💧</div>
+        <div class="val" style="color:#facc15">17.3</div>
+        <div class="unit">%</div>
+        <div class="label">نسبة الدهون</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div>
+    <div class="section-title">⚡ الوصول السريع</div>
+    <div class="actions-grid">
+      <a class="action-btn a-orange">
+        <span class="a-icon">💪</span>
+        <span class="a-label">تماريني</span>
+      </a>
+      <a class="action-btn a-green">
+        <span class="a-icon">🥗</span>
+        <span class="a-label">التغذية</span>
+      </a>
+      <a class="action-btn a-blue">
+        <span class="a-icon">📊</span>
+        <span class="a-label">InBody</span>
+      </a>
+      <a class="action-btn a-gold">
+        <span class="a-icon">🤖</span>
+        <span class="a-label">FitBot</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Gallery -->
+  <div>
+    <div class="section-title">🏟️ صالة DewedarGYM</div>
+    <div class="gallery-grid">
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=400&q=80" />
+        <div class="caption">قاعة الأثقال</div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=400&q=80" />
+        <div class="caption">أجهزة الكارديو</div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1576678927484-cc907957088c?w=400&q=80" />
+        <div class="caption">قاعة التمدد</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

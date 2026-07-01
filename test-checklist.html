@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GymPro — Test Checklist</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f0f0f; color: #e5e5e5; padding: 20px; }
+  h1 { color: #ff7800; font-size: 28px; margin-bottom: 4px; }
+  .subtitle { color: #666; font-size: 13px; margin-bottom: 24px; }
+  .progress-bar { background: #1a1a1a; border-radius: 20px; height: 12px; margin-bottom: 8px; overflow: hidden; }
+  .progress-fill { background: linear-gradient(90deg, #ff7800, #ff4400); height: 100%; border-radius: 20px; transition: width 0.3s; }
+  .progress-text { color: #888; font-size: 12px; margin-bottom: 24px; }
+  .section { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 16px; margin-bottom: 16px; overflow: hidden; }
+  .section-header { padding: 14px 18px; background: #222; display: flex; align-items: center; gap-10px; cursor: pointer; user-select: none; border-bottom: 1px solid #2a2a2a; }
+  .section-header h2 { font-size: 16px; font-weight: 800; flex: 1; }
+  .section-badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 700; }
+  .badge-admin   { background: rgba(168,85,247,0.2); color: #c084fc; }
+  .badge-coach   { background: rgba(59,130,246,0.2); color: #60a5fa; }
+  .badge-trainee { background: rgba(255,120,0,0.2);  color: #ff7800; }
+  .badge-system  { background: rgba(34,197,94,0.2);  color: #4ade80; }
+  .badge-payment { background: rgba(234,179,8,0.2);  color: #facc15; }
+  .test-item { padding: 12px 18px; border-bottom: 1px solid #222; display: flex; align-items: flex-start; gap: 12px; cursor: pointer; transition: background 0.15s; }
+  .test-item:last-child { border-bottom: none; }
+  .test-item:hover { background: #222; }
+  .test-item.done { opacity: 0.5; }
+  .test-item.fail { background: rgba(239,68,68,0.08); }
+  .checkbox { width: 20px; height: 20px; border-radius: 6px; border: 2px solid #444; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 1px; transition: all 0.15s; }
+  .done .checkbox { background: #22c55e; border-color: #22c55e; }
+  .fail .checkbox { background: #ef4444; border-color: #ef4444; }
+  .test-content { flex: 1; }
+  .test-title { font-size: 14px; font-weight: 600; color: #e5e5e5; margin-bottom: 3px; }
+  .test-steps { font-size: 12px; color: #666; line-height: 1.6; }
+  .test-expect { font-size: 12px; color: #4ade80; margin-top: 4px; }
+  .test-expect::before { content: '✓ المتوقع: '; color: #4ade80; font-weight: 700; }
+  .fail-btn, .pass-btn { font-size: 11px; padding: 3px 8px; border-radius: 6px; border: none; cursor: pointer; margin-top: 6px; margin-left: 4px; }
+  .pass-btn { background: rgba(34,197,94,0.2); color: #4ade80; }
+  .fail-btn { background: rgba(239,68,68,0.2); color: #ef4444; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+  .stat { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 14px; text-align: center; }
+  .stat .num { font-size: 28px; font-weight: 900; }
+  .stat .lbl { font-size: 11px; color: #666; margin-top: 2px; }
+  .note { background: rgba(255,120,0,0.1); border: 1px solid rgba(255,120,0,0.3); border-radius: 10px; padding: 10px 14px; font-size: 12px; color: #ff9840; margin-bottom: 16px; }
+  .reset-btn { background: #333; color: #888; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; float: left; }
+  .reset-btn:hover { background: #444; color: #ccc; }
+</style>
+</head>
+<body>
+
+<h1>🏋️ GymPro — Test Checklist</h1>
+<p class="subtitle">اضغط على كل تيست لتأكيده ✅ أو استخدم أزرار Pass/Fail</p>
+
+<div class="stats">
+  <div class="stat"><div class="num" id="total" style="color:#888">0</div><div class="lbl">إجمالي التيستات</div></div>
+  <div class="stat"><div class="num" id="passed" style="color:#4ade80">0</div><div class="lbl">نجح ✅</div></div>
+  <div class="stat"><div class="num" id="failed" style="color:#ef4444">0</div><div class="lbl">فشل ❌</div></div>
+  <div class="stat"><div class="num" id="pending" style="color:#ff7800">0</div><div class="lbl">لم يتم بعد</div></div>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+<div class="progress-text" id="progress-text">0% مكتمل</div>
+
+<button class="reset-btn" onclick="resetAll()">🔄 إعادة تعيين الكل</button>
+<br><br>
+
+<div class="note">⚡ قبل البدء: تأكد إن السيرفر شغال على localhost:5000 والفرونت على localhost:3001</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 1: AUTH -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>🔐 1. تسجيل الدخول والحسابات</h2>
+    <span class="section-badge badge-system">System</span>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">تسجيل دخول أدمن</div>
+      <div class="test-steps">اذهب لـ /login → ادخل بيانات الأدمن → اضغط دخول</div>
+      <div class="test-expect">يوجهك لـ /admin ويظهر "الداشبورد"</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">تسجيل دخول كوتش</div>
+      <div class="test-steps">سجل خروج → ادخل بيانات كوتش</div>
+      <div class="test-expect">يوجهك لـ /coach</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">تسجيل دخول متدرب</div>
+      <div class="test-steps">سجل خروج → ادخل بيانات متدرب</div>
+      <div class="test-expect">يوجهك لـ /trainee وتظهر الصفحة الرئيسية</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">بيانات دخول غلط</div>
+      <div class="test-steps">ادخل باسورد غلط</div>
+      <div class="test-expect">رسالة خطأ — لا يدخل للسيستم</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">حماية الراوتات</div>
+      <div class="test-steps">بدون دخول، اذهب لـ /admin مباشرة في الـ URL</div>
+      <div class="test-expect">يرجعك لصفحة الدخول</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">متدرب يحاول يدخل /admin</div>
+      <div class="test-steps">ادخل كمتدرب → حاول تروح /admin</div>
+      <div class="test-expect">يُرجعك أو يظهر خطأ — لا يدخل</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 2: ADMIN - USERS -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>👑 2. الأدمن — إدارة المستخدمين</h2>
+    <span class="section-badge badge-admin">Admin</span>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">إضافة متدرب جديد</div>
+      <div class="test-steps">المستخدمين → أضف مستخدم → نوع: متدرب → ادخل الاسم والإيميل والباسورد</div>
+      <div class="test-expect">يظهر في القائمة فوراً</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">إضافة كوتش جديد</div>
+      <div class="test-steps">أضف مستخدم → نوع: كوتش</div>
+      <div class="test-expect">يظهر في قائمة الكوتشز</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">validation إيميل مكرر</div>
+      <div class="test-steps">حاول تضيف مستخدم بنفس الإيميل</div>
+      <div class="test-expect">رسالة خطأ "الإيميل مستخدم بالفعل"</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">تعديل بيانات مستخدم</div>
+      <div class="test-steps">اضغط تعديل على مستخدم → غير الاسم → احفظ</div>
+      <div class="test-expect">يتحدث الاسم</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">حذف مستخدم</div>
+      <div class="test-steps">اضغط حذف على مستخدم → أكد</div>
+      <div class="test-expect">يختفي من القائمة</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 3: ADMIN - SUBSCRIPTIONS -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>💳 3. الأدمن — الاشتراكات</h2>
+    <span class="section-badge badge-admin">Admin</span>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">تسجيل دفع يدوي للمتدرب</div>
+      <div class="test-steps">المدفوعات → تأكيد يدوي → اختر المتدرب والباقة → احفظ</div>
+      <div class="test-expect">اشتراك يتفعل فوراً للمتدرب</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">تعديل اشتراك — عدد السيشنز</div>
+      <div class="test-steps">الاشتراكات → تعديل → غير عدد السيشنز المتبقية → احفظ</div>
+      <div class="test-expect">يتحدث عند المتدرب فوراً</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">حذف اشتراك كامل</div>
+      <div class="test-steps">الاشتراكات → اضغط حذف (🗑) → أكد</div>
+      <div class="test-expect">يختفي الاشتراك نهائياً</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">الاشتراك يتعطل بعد تاريخ الانتهاء</div>
+      <div class="test-steps">أنشئ اشتراك بتاريخ انتهاء قديم (أمس مثلاً عن طريق تعديل الداتابيز) → شغّل الـ background service أو انتظر</div>
+      <div class="test-expect">المتدرب لا يظهر عنده اشتراك فعال</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 4: ADMIN - SESSIONS -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>📅 4. الأدمن — السيشنز</h2>
+    <span class="section-badge badge-admin">Admin</span>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">تأكيد سيشن pending</div>
+      <div class="test-steps">السيشنز → ابحث عن سيشن "في الانتظار" → اضغط تأكيد</div>
+      <div class="test-expect">يتحول لـ "مؤكد ✅" وعدد السيشنز عند المتدرب ينقص</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">رفض سيشن</div>
+      <div class="test-steps">السيشنز → سيشن pending → اضغط إلغاء</div>
+      <div class="test-expect">يتحول لـ "ملغي ❌" وعدد السيشنز لا ينقص</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">تعديل حالة سيشن مؤكد</div>
+      <div class="test-steps">سيشن confirmed → اضغط إلغاء أو إعادة</div>
+      <div class="test-expect">تتغير الحالة وعدد السيشنز يتعدل</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">حذف سيشن</div>
+      <div class="test-steps">اضغط حذف (🗑) على أي سيشن → أكد</div>
+      <div class="test-expect">يُحذف نهائياً من القائمة</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 5: PAYMENTS -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>💰 5. الدفع والاشتراك (المتدرب)</h2>
+    <span class="section-badge badge-payment">Payment</span>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">المتدرب يشوف الباقات المتاحة</div>
+      <div class="test-steps">ادخل كمتدرب → اشتراكي → ابحث عن الباقات</div>
+      <div class="test-expect">تظهر الباقات النشطة بأسعارها</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">إرسال بيانات دفع (Vodafone/Instapay)</div>
+      <div class="test-steps">اختر باقة → ادخل رقم مرجعي → إرسال</div>
+      <div class="test-expect">رسالة "تم الإرسال — انتظر تأكيد الأدمن"</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">الأدمن يشوف الدفع المعلق ويأكده</div>
+      <div class="test-steps">ادخل كأدمن → المدفوعات → ابحث عن الدفع → اضغط تأكيد</div>
+      <div class="test-expect">الاشتراك يتفعل عند المتدرب</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">رفض دفع</div>
+      <div class="test-steps">الأدمن → المدفوعات → اضغط رفض</div>
+      <div class="test-expect">الاشتراك لا يتفعل — حالة "مرفوض"</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 6: COACH -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>🏋️ 6. الكوتش — تسجيل الحضور</h2>
+    <span class="section-badge badge-coach">Coach</span>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">تسجيل سيشن للمتدرب</div>
+      <div class="test-steps">ادخل ككوتش → تسجيل الحضور → اختر متدرب → اختر تاريخ اليوم → سجّل</div>
+      <div class="test-expect">رسالة "تم التسجيل — في انتظار تأكيد الأدمن"</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">منع تسجيل نفس اليوم مرتين</div>
+      <div class="test-steps">سجّل سيشن لمتدرب في نفس اليوم مرتين</div>
+      <div class="test-expect">رسالة خطأ "تم تسجيل سيشن لهذا المتدرب في نفس اليوم"</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">منع التسجيل خارج فترة الاشتراك</div>
+      <div class="test-steps">حاول تسجّل سيشن بتاريخ قبل بداية الاشتراك أو بعد نهايته</div>
+      <div class="test-expect">رسالة خطأ "التاريخ خارج فترة الاشتراك"</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">منع التسجيل لو السيشنز خلصت</div>
+      <div class="test-steps">متدرب عنده 0 سيشنز متبقية → الكوتش يحاول يسجّل</div>
+      <div class="test-expect">رسالة خطأ "انتهت السيشنز المتاحة هذا الشهر"</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">⭐ بعد تأكيد 12 سيشن — المتدرب يُشال من الكوتش</div>
+      <div class="test-steps">1. متدرب باقة برايفت 12 سيشن<br>2. الكوتش يسجّل 12 سيشن + الأدمن يأكدهم كلهم<br>3. الـ background service يشتغل (أو انتظر للـ midnight)</div>
+      <div class="test-expect">حالة المتدرب = "مكتمل التدريب" 🎓 — يُحذف من عداد الكوتش</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">⭐ انتهاء الشهر — تصفير السيشنز</div>
+      <div class="test-steps">متدرب اشترك شهر كامل — بعد شهر (أو عبر تعديل تاريخ الاشتراك)</div>
+      <div class="test-expect">السيشنز تتصفر تلقائياً للشهر الجديد</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">⭐ انتهاء الاشتراك — المتدرب يتشال من الكوتش</div>
+      <div class="test-steps">اشتراك ينتهي اليوم → الـ background service يشتغل</div>
+      <div class="test-expect">IsActive = false، TrainingStatus = Completed، يُحذف من عداد الكوتش</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 7: COACH - EXERCISES & NUTRITION -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>💪 7. الكوتش — التمارين والتغذية</h2>
+    <span class="section-badge badge-coach">Coach</span>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">إضافة تمرين للمكتبة</div>
+      <div class="test-steps">التمارين → أضف تمرين → ادخل الاسم والعضلة والمجموعات → احفظ</div>
+      <div class="test-expect">يظهر في مكتبة التمارين</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">تعيين تمرين لمتدرب</div>
+      <div class="test-steps">اختر متدرب → اختر تمرين → اختر اليوم → عيّن</div>
+      <div class="test-expect">يظهر في برنامج المتدرب</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">حذف تمرين من المتدرب (مش من المكتبة)</div>
+      <div class="test-steps">افتح برنامج متدرب → اضغط 🗑 على تمرين معين</div>
+      <div class="test-expect">يُحذف من المتدرب فقط — يبقى في المكتبة</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">حذف تمرين من المكتبة</div>
+      <div class="test-steps">قف على المكتبة → اضغط 🗑 على التمرين</div>
+      <div class="test-expect">يُحذف من المكتبة فقط</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">إنشاء خطة تغذية</div>
+      <div class="test-steps">خطط التغذية → اختر متدرب → أضف وجبات → احفظ</div>
+      <div class="test-expect">تظهر الخطة عند المتدرب في صفحة التغذية</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 8: TRAINEE -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>🏃 8. المتدرب — بروفايل وإحصائيات</h2>
+    <span class="section-badge badge-trainee">Trainee</span>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">تحديث البروفايل</div>
+      <div class="test-steps">بروفايلي → ادخل الطول والوزن والعمر → احفظ</div>
+      <div class="test-expect">تُحفظ البيانات وتظهر في الإحصائيات</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">حساب BMI والإحصائيات تلقائياً</div>
+      <div class="test-steps">بعد حفظ الطول والوزن → افتح الصفحة الرئيسية</div>
+      <div class="test-expect">تظهر BMI والسعرات ونسبة الدهون محسوبة</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">إضافة قياس InBody</div>
+      <div class="test-steps">InBody → أضف قياس → ادخل البيانات → احفظ</div>
+      <div class="test-expect">يظهر في السجل ويُحدّث الإحصائيات</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">عدد السيشنز يقل بعد تأكيد سيشن</div>
+      <div class="test-steps">لاحظ عدد السيشنز قبل وبعد تأكيد الأدمن</div>
+      <div class="test-expect">ينقص بـ 1 بعد كل تأكيد — الحلقة تتحدث</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">اختيار الكوتش</div>
+      <div class="test-steps">الكوتشز → اختر كوتش → اشترك برايفت</div>
+      <div class="test-expect">يظهر اسم الكوتش في الصفحة الرئيسية والبروفايل</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">⭐ قفل تغيير الكوتش بعد 2 سيشن تجريبي</div>
+      <div class="test-steps">متدرب استخدم 2 سيشن تجريبيين → يحاول يغير الكوتش</div>
+      <div class="test-expect">رسالة "انتهت الفترة التجريبية 🔒" — زر التغيير معطّل</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 9: FITBOT -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>🤖 9. FitBot</h2>
+    <span class="section-badge badge-trainee">Trainee</span>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">FitBot يعرف اسم المتدرب</div>
+      <div class="test-steps">اسأل: "من أنا؟" أو "ما هو اسمي؟"</div>
+      <div class="test-expect">يرد باسمك الحقيقي من البروفايل</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">FitBot يعطي نصيحة مخصصة</div>
+      <div class="test-steps">اسأل: "ما هو نظامي الغذائي المناسب؟"</div>
+      <div class="test-expect">يرد بناءً على وزنك وهدفك الحقيقي</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">FitBot يرفض أسئلة خارج الجيم</div>
+      <div class="test-steps">اسأله: "كيف أطبخ كشري؟"</div>
+      <div class="test-expect">يرد بأنه متخصص في اللياقة فقط</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 10: GYM SETTINGS -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>⚙️ 10. إعدادات الجيم</h2>
+    <span class="section-badge badge-admin">Admin</span>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">تغيير اسم الجيم</div>
+      <div class="test-steps">إعدادات الجيم → غير الاسم → احفظ</div>
+      <div class="test-expect">يتحدث في الـ sidebar والصفحة الرئيسية للمتدرب</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">رفع صورة خلفية</div>
+      <div class="test-steps">تاب "واجهة المتدرب" → رفع صورة → احفظ</div>
+      <div class="test-expect">تظهر كخلفية صفحة المتدرب الرئيسية</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">تعديل مميزات الجيم</div>
+      <div class="test-steps">تاب "واجهة المتدرب" → عدّل ميزة → احفظ</div>
+      <div class="test-expect">تتحدث في قسم المميزات عند المتدرب</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">رفع لوجو الجيم</div>
+      <div class="test-steps">تاب "هوية الجيم" → رفع لوجو → احفظ</div>
+      <div class="test-expect">يظهر اللوجو في الـ sidebar</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 11: LIGHT MODE -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>🌞 11. اللايت مود</h2>
+    <span class="section-badge badge-system">System</span>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">تفعيل اللايت مود</div>
+      <div class="test-steps">اضغط على "لايت مود" في أسفل الـ sidebar</div>
+      <div class="test-expect">الخلفية تتحول للفاتح والنصوص واضحة داكنة</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+
+  <div class="test-item" onclick="toggle(this)">
+    <div class="checkbox">✓</div>
+    <div class="test-content">
+      <div class="test-title">العناوين مقروءة في اللايت مود</div>
+      <div class="test-steps">في اللايت مود → افتح كل الصفحات (داشبورد، بروفايل، تمارين، تغذية)</div>
+      <div class="test-expect">كل النصوص والعناوين واضحة — مفيش نص أبيض على خلفية فاتحة</div>
+      <div><button class="pass-btn" onclick="markPass(event,this)">✅ Pass</button><button class="fail-btn" onclick="markFail(event,this)">❌ Fail</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggle(el) {
+    if (!el.classList.contains('done') && !el.classList.contains('fail')) {
+      el.classList.add('done')
+    } else if (el.classList.contains('done')) {
+      el.classList.remove('done')
+    }
+    updateStats()
+  }
+
+  function markPass(e, btn) {
+    e.stopPropagation()
+    const item = btn.closest('.test-item')
+    item.classList.remove('fail')
+    item.classList.add('done')
+    updateStats()
+  }
+
+  function markFail(e, btn) {
+    e.stopPropagation()
+    const item = btn.closest('.test-item')
+    item.classList.remove('done')
+    item.classList.add('fail')
+    updateStats()
+  }
+
+  function updateStats() {
+    const all = document.querySelectorAll('.test-item')
+    const passed = document.querySelectorAll('.test-item.done')
+    const failed = document.querySelectorAll('.test-item.fail')
+    const pending = all.length - passed.length - failed.length
+
+    document.getElementById('total').textContent = all.length
+    document.getElementById('passed').textContent = passed.length
+    document.getElementById('failed').textContent = failed.length
+    document.getElementById('pending').textContent = pending
+
+    const pct = Math.round((passed.length / all.length) * 100)
+    document.getElementById('progress').style.width = pct + '%'
+    document.getElementById('progress-text').textContent = pct + '% مكتمل (' + passed.length + '/' + all.length + ')'
+
+    // Save state
+    const state = {}
+    all.forEach((item, i) => {
+      state[i] = item.classList.contains('done') ? 'pass' : item.classList.contains('fail') ? 'fail' : ''
+    })
+    localStorage.setItem('gymtest', JSON.stringify(state))
+  }
+
+  function resetAll() {
+    if (!confirm('هتمسح كل النتايج؟')) return
+    document.querySelectorAll('.test-item').forEach(i => { i.classList.remove('done', 'fail') })
+    localStorage.removeItem('gymtest')
+    updateStats()
+  }
+
+  // Restore saved state
+  window.onload = () => {
+    const saved = JSON.parse(localStorage.getItem('gymtest') || '{}')
+    const all = document.querySelectorAll('.test-item')
+    all.forEach((item, i) => {
+      if (saved[i] === 'pass') item.classList.add('done')
+      else if (saved[i] === 'fail') item.classList.add('fail')
+    })
+    updateStats()
+  }
+</script>
+</body>
+</html>
